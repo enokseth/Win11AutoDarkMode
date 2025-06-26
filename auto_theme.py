@@ -6,6 +6,11 @@ import winreg
 import sys
 import os
 import time
+import win32
+import win32api
+import winerror
+import win32event
+
 import subprocess
 from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
@@ -14,6 +19,12 @@ from astral.sun import sun
 from win11toast import toast
 from pystray import Icon, MenuItem, Menu
 from PIL import Image, ImageDraw
+
+# === INSTANCE UNIQUE ===
+mutex = win32event.CreateMutex(None, False, "AutoThemeSingleInstanceMutex")
+if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
+    print("[⚠️] Une instance d'AutoTheme est déjà en cours. Fermeture.")
+    sys.exit(0)
 
 # === ÉLÉVATION ===
 def is_admin():
@@ -78,11 +89,20 @@ def add_to_startup():
         exe_path = os.path.abspath(sys.argv[0])
         reg_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
         app_name = "AutoTheme"
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_key, 0, winreg.KEY_SET_VALUE) as key:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_key, 0, winreg.KEY_ALL_ACCESS) as key:
+            try:
+                current_value, _ = winreg.QueryValueEx(key, app_name)
+                if current_value == exe_path:
+                    print("[Startup] Déjà dans le démarrage.")
+                    return
+            except FileNotFoundError:
+                pass  # pas encore ajouté
+
             winreg.SetValueEx(key, app_name, 0, winreg.REG_SZ, exe_path)
-        print("[Startup] AutoTheme ajouté au démarrage.")
+            print("[Startup] AutoTheme ajouté au démarrage.")
     except Exception as e:
         print(f"[Startup] Erreur ajout au démarrage : {e}")
+
 
 def remove_from_startup():
     try:
@@ -209,3 +229,4 @@ def run_auto_theme():
 
 threading.Thread(target=run_auto_theme, daemon=True).start()
 icon.run()
+
