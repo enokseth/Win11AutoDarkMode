@@ -1,14 +1,19 @@
 ; -- AutoThemeInstaller.iss --
 ; Script d'installation pour Auto Theme Switch
 
+#define MyAppVersion GetEnv("RELEASE_VERSION")
+#if MyAppVersion == ""
+  #define MyAppVersion "1.7.4"
+#endif
+
 [Setup]
 AppName=Auto Theme Switch
-AppVersion=1.7.4
+AppVersion={#MyAppVersion}
 AppPublisher=EnokSeth
 DefaultDirName={autopf}\Auto Theme Switch
 DefaultGroupName=Auto Theme Switch
 OutputDir=userdocs:Inno Setup Builds
-OutputBaseFilename=AutoThemeInstaller
+OutputBaseFilename=AutoThemeInstaller_{#MyAppVersion}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -30,3 +35,4 @@ Name: "desktopicon"; Description: "Créer une icône sur le bureau"; GroupDescri
 
 [Run]
 Filename: "{app}\autotheme.exe"; Description: "Lancer Auto Theme Switch"; Flags: nowait postinstall skipifsilent
+
