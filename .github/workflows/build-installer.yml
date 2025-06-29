@@ -33,7 +33,7 @@ jobs:
       - name: Build Python app with PyInstaller
         run: |
           venv\Scripts\activate
-          pyinstaller --onefile --noconsole --name "AutoThemeSwitch" main.py
+          pyinstaller --onefile --noconsole --name "AutoThemeSwitch" autotheme.py
 
       - name: Download and Install Inno Setup
         run: |
