@@ -49,15 +49,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: AutoThemeSetup
-          path: Output\AutoThemeInstaller.exe
+          path: Output/AutoThemeInstaller_${{ inputs.release_version }}.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ inputs.release_version }}
           tag_name: ${{ inputs.release_version }}
-          files: Output\AutoThemeInstaller.exe
+          files: Output/AutoThemeInstaller_${{ inputs.release_version }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
