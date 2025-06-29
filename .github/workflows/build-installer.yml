@@ -42,7 +42,8 @@ jobs:
 
       - name: Compile Inno Setup Installer
         run: |
-          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" AutoThemeInstaller.iss
+          $env:RELEASE_VERSION="${{ inputs.release_version }}"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "AutoThemeInstaller.iss"
 
       - name: Upload Setup EXE as Artifact
         uses: actions/upload-artifact@v4
@@ -58,4 +59,5 @@ jobs:
           files: Output\AutoThemeInstaller.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
